@@ -6,6 +6,7 @@ export default class Search extends Component {
   state = {
     books: [],
     query: "",
+    onSearch: true,
   };
 
   componentDidMount() {
@@ -45,31 +46,34 @@ export default class Search extends Component {
       this.componentDidMount();
     }
   };
+  viewBook = (link) => {
+    let path = link
+    window.open(path);
+  };
 
   saveBook = (bookId) => {
-
-    const savedBookData = this.state.books.filter(book => {
-        return book.id === bookId
+    const savedBookData = this.state.books.filter((book) => {
+      return book.id === bookId;
     });
 
     const book = savedBookData[0].volumeInfo;
 
     console.log(book);
 
-    axios.post("/api/save", {
+    axios
+      .post("/api/save", {
         title: book.title,
         author: book.authors[0],
         description: book.description,
         image: book.imageLinks.thumbnail,
-        link: book.infoLink
-    }).then(res => {
-        console.log(res)
-    }).catch(err => {
+        link: book.infoLink,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
         console.log(err);
-    })
-
-    
-    
+      });
   };
 
   render() {
@@ -96,6 +100,9 @@ export default class Search extends Component {
             <BookData
               key={book.id}
               id={book.id}
+              link={book.volumeInfo.infoLink}
+              onSearch={this.state.onSearch}
+              viewBook={this.viewBook}
               saveBook={this.saveBook}
               authors={book.volumeInfo.authors}
               title={book.volumeInfo.title}
