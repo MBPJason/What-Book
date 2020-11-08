@@ -46,9 +46,30 @@ export default class Search extends Component {
     }
   };
 
-  saveBook = (event) => {
-    event.preventDefault();
-    // if ()
+  saveBook = (bookId) => {
+
+    const savedBookData = this.state.books.filter(book => {
+        return book.id === bookId
+    });
+
+    const book = savedBookData[0].volumeInfo;
+
+    console.log(book);
+
+    axios.post("/api/save", {
+        title: book.title,
+        author: book.authors[0],
+        description: book.description,
+        image: book.imageLinks.thumbnail,
+        link: book.infoLink
+    }).then(res => {
+        console.log(res)
+    }).catch(err => {
+        console.log(err);
+    })
+
+    
+    
   };
 
   render() {
