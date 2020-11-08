@@ -9,8 +9,7 @@ export default class Search extends Component {
   };
 
   componentDidMount() {
-    const Arr = [];
-    const queryBooks = "Harry Potter";
+    let queryBooks = "Harry Potter";
     axios
       .get(`https://www.googleapis.com/books/v1/volumes?q=${queryBooks}`)
       .then((res) => {
@@ -19,19 +18,65 @@ export default class Search extends Component {
           books: res.data.items,
         });
       });
-    console.log(Arr);
-    console.log(this.state.books);
   }
+
+  handleInputChange = (event) => {
+    const bookName = event.target.value;
+
+    this.setState({
+      query: bookName,
+    });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    if (this.state.query) {
+      let queryBooks = this.state.query;
+      axios
+        .get(`https://www.googleapis.com/books/v1/volumes?q=${queryBooks}`)
+        .then((res) => {
+          console.log(res);
+          this.setState({
+            books: res.data.items,
+          });
+        });
+      console.log(this.state.books);
+    } else {
+      this.componentDidMount();
+    }
+  };
+
+  saveBook = (event) => {
+    event.preventDefault();
+    // if ()
+  };
 
   render() {
     return (
       <div>
         <h2>Books</h2>
-        <ul>
+        <form>
+          <input
+            type='text'
+            name='Book Search'
+            value={this.state.query}
+            onChange={this.handleInputChange}
+            placeholder='Search for a book'
+          />
+          <button
+            className='btn btn-text btn-success'
+            onClick={this.handleSubmit}
+          >
+            Submit
+          </button>
+        </form>
+        <ul className='list-group'>
           {this.state.books.map((book) => (
             <BookData
               key={book.id}
               id={book.id}
+              saveBook={this.saveBook}
+              authors={book.volumeInfo.authors}
               title={book.volumeInfo.title}
               description={book.volumeInfo.description}
               thumbnail={book.volumeInfo.imageLinks.thumbnail}
